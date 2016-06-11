@@ -1,0 +1,71 @@
+<html>
+	<head>
+		<title>Hello World Websocket!</title>
+
+
+
+
+	</head>
+	<body>
+		<div id="map" style="width: 500px; height: 300px;"></div>
+		<div><span id="count"></span> number of clients has connected since you first loaded this page</div>
+
+		<script type="text/javascript">
+			var map = null;
+			var cnt = 0;
+			var exampleSocket = new WebSocket("ws://localhost:8080/websocket");
+
+			exampleSocket.onopen = function(event) {
+				navigator.geolocation.getCurrentPosition(function(position) {
+					var msg = {lat: position.coords.latitude,
+								lng: position.coords.longitude};
+					exampleSocket.send(JSON.stringify(msg));
+
+				});
+			}
+
+			exampleSocket.onmessage = function (event) {
+				var msg = JSON.parse(event.data);
+
+			  	cnt++;
+			  	renderCount();
+
+			    var interval = setInterval(function() {
+			    	if (tryRender(msg)) {
+			    		clearInterval(interval);
+			    	}
+			    }, 500);
+			}
+
+			function tryRender(pos) {
+				if (map !== null) {    
+				    var marker = new google.maps.Marker({
+					    position: pos,
+					    map: map,
+					    title: 'Hello World!'
+					  });
+				    map.setCenter(pos);
+				    return true;
+				}
+				return false;
+			}
+
+			function renderCount() {
+				document.querySelector('#count').innerHTML = cnt;
+			}
+
+			function initMap() {
+				console.log('init map==');
+		        map = new google.maps.Map(document.getElementById('map'), {
+		          center: {lat: -34.397, lng: 150.644},
+		          zoom: 6
+		        });
+		      }
+
+
+		</script>
+		<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap">
+    </script>
+	</body>
+</html>
