@@ -8,5 +8,7 @@ Once you've got Elixir installed run with:
 Or
 > mix run --no-halt
 
+Create your google maps API key and put it in priv/index.html after ?key= in the include-script for google maps
+
 Go to your favourite browser to the adress:
 > localhost:8080/static/index.html
